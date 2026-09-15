@@ -83,11 +83,13 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .rb-top__bel a { display: inline-flex; align-items: center; gap: 7px; }
 .rb-top__bel svg { color: var(--merk); }
 .rb-top a:hover { color: var(--merk); }
-.rb-talen { margin-left: auto; display: flex; align-items: center; gap: 2px; }
+.rb-talen { display: flex; align-items: center; gap: 2px; }
+.rb-talen--kop { margin-left: auto; padding-right: 20px; margin-right: 4px; border-right: 1px solid var(--lijn); }
+.rb-talen--menu { display: none; }
 .rb-taal { display: inline-flex; align-items: center; justify-content: center; min-width: 32px; height: 26px; padding: 0 7px; border-radius: 3px; font-family: "Plus Jakarta Sans", system-ui, sans-serif; font-size: 12.5px; font-weight: 700; letter-spacing: .02em; color: var(--zacht); transition: color .18s ease, background .18s ease; }
 a.rb-taal:hover { color: var(--merk); background: var(--merk-licht); }
 .rb-taal.is-aan { color: var(--wit); background: var(--merk); }
-.rb-top__soc { margin-left: 18px; display: flex; gap: 8px; }
+.rb-top__soc { margin-left: auto; display: flex; gap: 8px; }
 .rb-top__soc a { width: 30px; height: 30px; border-radius: 999px; background: var(--merk); color: var(--wit); display: grid; place-items: center; }
 .rb-top__soc a:hover { background: var(--merk-diep); color: var(--wit); }
 
@@ -98,7 +100,7 @@ a.rb-taal:hover { color: var(--merk); background: var(--merk-licht); }
 .rb-nav ul { display: flex; gap: 30px; }
 .rb-nav a { font-family: "Plus Jakarta Sans", system-ui, sans-serif; font-size: 15.5px; font-weight: 600; color: var(--inkt); padding: 8px 0; border-bottom: 2px solid transparent; }
 .rb-nav a:hover { color: var(--merk); border-color: var(--merk); }
-.rb-kop__bel { margin-left: auto; height: 48px; font-size: 15px; }
+.rb-kop__bel { height: 48px; font-size: 15px; }
 
 .rb-menuknop { display: none; width: 46px; height: 46px; border: 1px solid var(--lijn); background: var(--wit); border-radius: var(--r); cursor: pointer; padding: 0; place-items: center; transition: border-color .2s ease, background .2s ease; }
 .rb-menuknop[aria-expanded="true"] { background: var(--merk); border-color: var(--merk); }
@@ -325,9 +327,11 @@ a.rb-score:hover span { color: var(--merk); }
   .rb-top__stuk:nth-child(3) { display: none; }
   .rb-top__bel { display: block; }
   .rb-top__bel a { font-weight: 600; color: var(--inkt); min-height: 42px; }
-  .rb-talen { margin-left: auto; }
-  .rb-taal { min-width: 30px; height: 26px; font-size: 12px; padding: 0 6px; }
-  .rb-top__soc { margin-left: 10px; gap: 6px; }
+  .rb-talen--kop { display: none; }
+  .rb-talen--menu { display: flex; gap: 6px; margin-top: 20px; }
+  .rb-talen--menu .rb-taal { flex: 1; min-width: 0; height: 44px; font-size: 14px; border: 1px solid var(--lijn); border-radius: var(--r); }
+  .rb-talen--menu .rb-taal.is-aan { border-color: var(--merk); }
+  .rb-top__soc { margin-left: auto; gap: 7px; }
   .rb-top__soc a { width: 28px; height: 28px; }
 
   .rb-kop__in { min-height: 68px; gap: 14px; }
@@ -476,4 +480,27 @@ a.rb-score:hover span { color: var(--merk); }
   .rb-tegel { width: 196px; }
   .rb-slot__in { flex-direction: column; align-items: flex-start; }
   .rb-slot .rb-knop { width: 100%; }
+}
+
+/* ---------- zwevende belknop ---------- */
+.rb-belzweef {
+  position: fixed; right: 26px; bottom: 26px; z-index: 70;
+  display: inline-flex; align-items: center; gap: 10px;
+  height: 54px; padding: 0 22px; border-radius: 999px;
+  background: var(--merk); color: var(--wit);
+  font-family: "Plus Jakarta Sans", system-ui, sans-serif; font-weight: 700; font-size: 15px;
+  box-shadow: 0 8px 26px rgba(15, 34, 68, .3);
+  opacity: 0; visibility: hidden; transform: translateY(16px) scale(.96);
+  transition: opacity .28s ease, transform .28s cubic-bezier(.3,.7,.3,1), background .18s ease, visibility .28s;
+}
+.rb-belzweef.is-zichtbaar { opacity: 1; visibility: visible; transform: none; }
+.rb-belzweef:hover { background: var(--merk-diep); color: var(--wit); }
+.rb-belzweef svg { flex: 0 0 auto; }
+
+@media (max-width: 1000px) {
+  .rb-belzweef { right: 18px; bottom: 18px; width: 56px; height: 56px; padding: 0; justify-content: center; }
+  .rb-belzweef span { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rb-belzweef { transition: none; }
 }

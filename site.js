@@ -91,29 +91,48 @@
     var spoor = loop.querySelector('.rb-loop__spoor');
     if (!spoor) return;
     var merken = loop.classList.contains('rb-loop--merken');
-    var snelheid = merken ? 0.28 : 0.42;
-    var pauze = false, positie = 0, sleept = false, startX = 0, startPos = 0;
+    var perSeconde = merken ? 26 : 38;      // pixels per seconde
+    var pauze = false, sleept = false, startX = 0, startPos = 0;
+    var positie = 0, vorigeTijd = 0;
 
     var helft = function () { return spoor.scrollWidth / 2; };
-    var wikkel = function () {
+
+    // de float-positie is de waarheid. De browser rondt scrollLeft af, dus we lezen
+    // hem tijdens het automatisch lopen nooit terug.
+    var schrijf = function () {
       var h = helft();
-      if (!h) return;
-      if (loop.scrollLeft >= h) loop.scrollLeft -= h;
-      else if (loop.scrollLeft <= 0) loop.scrollLeft += h;
-      positie = loop.scrollLeft;
+      if (h > 0) {
+        while (positie >= h) positie -= h;
+        while (positie < 0) positie += h;
+      }
+      loop.scrollLeft = positie;
     };
 
-    var stap = function () {
-      if (!pauze && !rustig && !sleept && loop.scrollWidth > loop.clientWidth) {
-        positie += snelheid;
-        loop.scrollLeft = positie;
-        wikkel();
+    // na een eigen scroll of sleep de float weer gelijkzetten met wat de browser toont
+    var synchroniseer = function () {
+      var h = helft();
+      positie = loop.scrollLeft;
+      if (h > 0) {
+        if (positie >= h) { positie -= h; loop.scrollLeft = positie; }
+        else if (positie <= 0) { positie += h; loop.scrollLeft = positie; }
+      }
+    };
+
+    var stap = function (tijd) {
+      if (!vorigeTijd) vorigeTijd = tijd;
+      var verschil = Math.min(tijd - vorigeTijd, 100) / 1000;
+      vorigeTijd = tijd;
+      if (!pauze && !rustig && !sleept && spoor.scrollWidth > loop.clientWidth) {
+        positie += perSeconde * verschil;
+        schrijf();
       }
       requestAnimationFrame(stap);
     };
 
-    loop.addEventListener('pointerenter', function () { pauze = true; });
-    loop.addEventListener('pointerleave', function () { pauze = false; positie = loop.scrollLeft; });
+    // alleen een muis pauzeert bij aanwijzen. Op een telefoon komt er na een tik
+    // geen pointerleave, dan zou de band voorgoed blijven stilstaan.
+    loop.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') pauze = true; });
+    loop.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') { pauze = false; synchroniseer(); } });
 
     loop.addEventListener('pointerdown', function (e) {
       sleept = true; startX = e.clientX; startPos = loop.scrollLeft;
@@ -123,33 +142,40 @@
     loop.addEventListener('pointermove', function (e) {
       if (!sleept) return;
       loop.scrollLeft = startPos - (e.clientX - startX);
-      wikkel();
       e.preventDefault();
     });
     var losLaten = function (e) {
       if (!sleept) return;
       sleept = false;
       loop.classList.remove('is-sleept');
-      positie = loop.scrollLeft;
+      synchroniseer();
+      if (e && e.pointerType !== 'mouse') pauze = false;
       try { loop.releasePointerCapture(e.pointerId); } catch (x) { /* al los */ }
     };
     loop.addEventListener('pointerup', losLaten);
     loop.addEventListener('pointercancel', losLaten);
+    window.addEventListener('pointerup', function (e) { if (e.pointerType !== 'mouse') { sleept = false; pauze = false; } });
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) { vorigeTijd = 0; pauze = false; synchroniseer(); } });
 
     var rust;
     loop.addEventListener('scroll', function () {
-      if (sleept) return;
+      if (sleept || !pauze) return;   // tijdens het automatisch lopen niets terugleren
       clearTimeout(rust);
-      rust = setTimeout(function () { positie = loop.scrollLeft; wikkel(); }, 120);
+      rust = setTimeout(synchroniseer, 120);
     }, { passive: true });
 
     // een klik op een tegel mag niet afgaan na een sleepbeweging
     loop.addEventListener('click', function (e) {
-      if (Math.abs(loop.scrollLeft - startPos) > 6) { e.preventDefault(); }
+      if (sleept || Math.abs(loop.scrollLeft - startPos) > 6) e.preventDefault();
     }, true);
 
     requestAnimationFrame(stap);
-    loop.__band = { loop: loop, spoor: spoor, wikkel: wikkel, zetPositie: function (x) { positie = x; } };
+    loop.__band = {
+      loop: loop, spoor: spoor,
+      synchroniseer: synchroniseer,
+      pauzeer: function (aan) { pauze = aan; if (!aan) vorigeTijd = 0; },
+      stand: function () { return { pauze: pauze, sleept: sleept, positie: Math.round(positie), rustig: rustig }; },
+    };
   });
 
   Array.prototype.forEach.call(document.querySelectorAll('[data-band]'), function (k) {
@@ -159,11 +185,38 @@
       var tegel = loop.querySelector('.rb-tegel');
       var stapje = tegel ? tegel.getBoundingClientRect().width + 18 : 300;
       var heen = k.dataset.band === 'vorige' ? -1 : 1;
-      loop.__band.wikkel();
+      // de automatische beweging even stilleggen, anders schrijft die de sprong meteen terug
+      loop.__band.pauzeer(true);
+      loop.__band.synchroniseer();
       loop.scrollBy({ left: heen * stapje, behavior: 'smooth' });
-      setTimeout(function () { loop.__band.zetPositie(loop.scrollLeft); loop.__band.wikkel(); }, 520);
+      setTimeout(function () {
+        loop.__band.synchroniseer();
+        loop.__band.pauzeer(false);
+      }, 620);
     });
   });
+
+
+  /* ---- zwevende belknop: verschijnt voorbij de hero ---- */
+  var belKnop = document.querySelector('.rb-belzweef');
+  if (belKnop) {
+    var grens = function () {
+      var hero = document.querySelector('.rb-hero') || document.querySelector('.rb-paginakop');
+      return hero ? hero.offsetTop + hero.offsetHeight * 0.7 : 500;
+    };
+    var bezig = false;
+    var kijk = function () {
+      if (bezig) return;
+      bezig = true;
+      requestAnimationFrame(function () {
+        bezig = false;
+        belKnop.classList.toggle('is-zichtbaar', window.scrollY > grens());
+      });
+    };
+    window.addEventListener('scroll', kijk, { passive: true });
+    window.addEventListener('resize', kijk);
+    kijk();
+  }
 
   /* ---- mobiel menu ---- */
   var knop = document.querySelector('.rb-menuknop');
