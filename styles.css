@@ -18,7 +18,11 @@
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 96px; }
+html { scroll-behavior: smooth; scroll-padding-top: 96px; -webkit-text-size-adjust: 100%; }
+
+/* Safari zoomt in bij dubbeltikken. manipulation zet dat uit en laat knijpen wel toe. */
+body { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+a, button, label, summary, input, select, textarea { touch-action: manipulation; }
 
 body {
   margin: 0;
@@ -90,11 +94,23 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .rb-nav a:hover { color: var(--merk); border-color: var(--merk); }
 .rb-kop__bel { margin-left: auto; height: 48px; font-size: 15px; }
 
-.rb-menuknop { display: none; width: 46px; height: 46px; border: 1px solid var(--lijn); background: var(--wit); border-radius: var(--r); cursor: pointer; padding: 13px 11px; flex-direction: column; justify-content: space-between; }
-.rb-menuknop span { display: block; height: 2px; background: var(--inkt); border-radius: 2px; }
-.rb-mobielmenu { display: none; border-top: 1px solid var(--lijn); padding: 10px 20px 22px; background: var(--wit); }
-.rb-mobielmenu a { display: block; padding: 14px 0; font-family: "Plus Jakarta Sans", system-ui, sans-serif; font-size: 16px; font-weight: 600; color: var(--inkt); border-bottom: 1px solid var(--lijn); }
-.rb-mobielmenu__knop { margin-top: 18px; width: 100%; }
+.rb-menuknop { display: none; width: 46px; height: 46px; border: 1px solid var(--lijn); background: var(--wit); border-radius: var(--r); cursor: pointer; padding: 0; place-items: center; transition: border-color .2s ease, background .2s ease; }
+.rb-menuknop[aria-expanded="true"] { background: var(--merk); border-color: var(--merk); }
+.rb-menuknop__lijnen { position: relative; display: block; width: 20px; height: 14px; }
+.rb-menuknop__lijnen span { position: absolute; left: 0; width: 20px; height: 2px; border-radius: 2px; background: var(--inkt); transition: transform .28s cubic-bezier(.3,.7,.3,1), opacity .18s ease, background .2s ease; }
+.rb-menuknop__lijnen span:nth-child(1) { top: 0; }
+.rb-menuknop__lijnen span:nth-child(2) { top: 6px; }
+.rb-menuknop__lijnen span:nth-child(3) { top: 12px; }
+.rb-menuknop[aria-expanded="true"] .rb-menuknop__lijnen span { background: var(--wit); }
+.rb-menuknop[aria-expanded="true"] .rb-menuknop__lijnen span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.rb-menuknop[aria-expanded="true"] .rb-menuknop__lijnen span:nth-child(2) { opacity: 0; transform: scaleX(.4); }
+.rb-menuknop[aria-expanded="true"] .rb-menuknop__lijnen span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+.rb-mobielmenu { display: none; border-top: 1px solid var(--lijn); padding: 6px 22px 24px; background: var(--wit); overflow: hidden; }
+.rb-mobielmenu.is-open { animation: rb-uitklap .3s cubic-bezier(.2,.7,.3,1); }
+@keyframes rb-uitklap { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: none; } }
+.rb-mobielmenu ul a { display: block; padding: 15px 2px; font-family: "Plus Jakarta Sans", system-ui, sans-serif; font-size: 16.5px; font-weight: 600; color: var(--inkt); border-bottom: 1px solid var(--lijn); }
+.rb-mobielmenu ul li:last-child a { border-bottom: 0; }
+.rb-mobielmenu__knop { margin-top: 20px; width: 100%; display: flex; justify-content: center; }
 
 /* ---------- hero: volle schermhoogte, doorlopend door afgewerkte projecten ---------- */
 .rb-hero { position: relative; min-height: calc(100svh - 128px); display: flex; align-items: center; overflow: hidden; }
@@ -166,14 +182,15 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 /* ---------- voor en na ---------- */
 .rb-schuif { max-width: 960px; margin-inline: auto; }
 .rb-schuif__paar figcaption { margin-top: 18px; text-align: center; font-family: "Plus Jakarta Sans", system-ui, sans-serif; font-weight: 700; font-size: 17px; color: var(--kop); }
-.rb-schuif__vak { position: relative; width: 100%; height: clamp(340px, 54vh, 560px); border-radius: var(--r-vak); overflow: hidden; background: #000; }
+.rb-schuif__vak { position: relative; width: 100%; height: clamp(340px, 54vh, 560px); border-radius: var(--r-vak); overflow: hidden; background: #000; touch-action: pan-y; cursor: ew-resize; user-select: none; -webkit-user-select: none; }
 .rb-schuif__na, .rb-schuif__voor { position: absolute; inset: 0; overflow: hidden; }
 .rb-schuif__voor { clip-path: inset(0 50% 0 0); }
-.rb-schuif__na img, .rb-schuif__voor img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.rb-schuif__na img, .rb-schuif__voor img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; -webkit-user-drag: none; }
 .rb-schuif__merk { position: absolute; top: 16px; padding: 7px 14px; border-radius: var(--r); font-family: "Plus Jakarta Sans", system-ui, sans-serif; font-size: 12px; font-weight: 700; letter-spacing: .03em; background: rgba(15, 18, 24, .8); color: var(--wit); z-index: 3; }
 .rb-schuif__merk--voor { left: 16px; }
 .rb-schuif__merk--na { right: 16px; }
-.rb-schuif__bereik { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; z-index: 5; }
+.rb-schuif__bereik { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; pointer-events: none; z-index: 5; }
+.rb-schuif__bereik:focus-visible { outline: 3px solid var(--merk); outline-offset: 3px; opacity: 1; }
 .rb-schuif__lijn { position: absolute; top: 0; bottom: 0; width: 3px; background: var(--wit); transform: translateX(-50%); z-index: 4; pointer-events: none; }
 .rb-schuif__greep { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 56px; height: 56px; border-radius: 999px; background: var(--wit); color: var(--merk); display: grid; place-items: center; box-shadow: 0 3px 14px rgba(0, 0, 0, .3); }
 .rb-schuif__bediening { display: flex; align-items: center; justify-content: center; gap: 18px; margin-top: 28px; }
@@ -197,11 +214,11 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .rb-waarom__tekst .rb-knop { margin-top: 28px; }
 
 /* ---------- cta met formulier ---------- */
-.rb-cta { position: relative; padding: 92px 0; color: var(--wit); overflow: hidden; }
+.rb-cta { position: relative; padding: 84px 0; color: var(--wit); overflow: hidden; }
 .rb-cta__foto { position: absolute; inset: 0; }
 .rb-cta__foto img { width: 100%; height: 100%; object-fit: cover; }
 .rb-cta::after { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, rgba(12, 20, 36, .95) 0%, rgba(12, 20, 36, .88) 48%, rgba(12, 20, 36, .7) 100%); }
-.rb-cta__in { position: relative; z-index: 2; display: grid; grid-template-columns: 1fr 440px; gap: 70px; align-items: center; }
+.rb-cta__in { position: relative; z-index: 2; display: grid; grid-template-columns: 1fr 460px; gap: 70px; align-items: center; }
 .rb-cta__tekst h2 { color: var(--wit); }
 .rb-cta__tekst > p { margin-top: 16px; color: rgba(255, 255, 255, .8); max-width: 44ch; }
 .rb-cta__tekst .rb-knop { margin-top: 28px; }
@@ -293,8 +310,6 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   .rb-menuknop { display: flex; margin-left: auto; }
   .rb-mobielmenu { display: none; }
   .rb-mobielmenu.is-open { display: block; }
-  .rb-mobielmenu ul a { display: block; padding: 14px 0; border-bottom: 1px solid var(--lijn); }
-  .rb-mobielmenu__knop { display: flex; justify-content: center; padding: 0 24px; border-bottom: 0; }
   .rb-logo img { width: 112px; }
 
   .rb-hero { min-height: calc(100svh - 108px); }
@@ -306,7 +321,9 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   .rb-hero h1 { max-width: none; font-size: clamp(29px, 7.6vw, 62px); }
   .rb-hero h1 br { display: none; }
   .rb-hero__sub { font-size: 16.5px; }
-  .rb-hero__knoppen .rb-knop { flex: 1 1 100%; }
+  .rb-hero__knoppen { gap: 10px; margin-top: 26px; flex-direction: column; align-items: stretch; }
+  .rb-hero__knoppen .rb-knop { width: 100%; height: 52px; font-size: 15.5px; }
+  .rb-bewijs { margin-top: 24px; }
   .rb-bewijs { margin-top: 30px; gap: 14px; }
   .rb-bewijs__stuk { padding-left: 0; border-left: 0; flex-basis: 100%; }
 

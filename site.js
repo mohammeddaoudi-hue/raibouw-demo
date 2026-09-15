@@ -60,8 +60,9 @@
   var menu = document.getElementById('rb-mobielmenu');
   if (knop && menu) {
     knop.addEventListener('click', function () {
-      var open = menu.classList.toggle('is-open');
-      menu.hidden = !open;
+      var open = !menu.classList.contains('is-open');
+      menu.hidden = false;
+      requestAnimationFrame(function () { menu.classList.toggle('is-open', open); if (!open) menu.hidden = true; });
       knop.setAttribute('aria-expanded', open ? 'true' : 'false');
       knop.setAttribute('aria-label', open ? 'Menu sluiten' : 'Menu openen');
     });
@@ -85,15 +86,46 @@
       var bereik = paar.querySelector('.rb-schuif__bereik');
       var voor = paar.querySelector('.rb-schuif__voor');
       var lijn = paar.querySelector('.rb-schuif__lijn');
-      if (!bereik || !voor || !lijn) return;
-      var zet = function () {
-        var x = Number(bereik.value);
+      var vak = paar.querySelector('.rb-schuif__vak');
+      if (!bereik || !voor || !lijn || !vak) return;
+
+      var zet = function (x) {
+        x = Math.max(0, Math.min(100, x));
+        bereik.value = x;
         voor.style.clipPath = 'inset(0 ' + (100 - x) + '% 0 0)';
         lijn.style.left = x + '%';
       };
-      bereik.addEventListener('input', zet);
-      bereik.addEventListener('change', zet);
-      zet();
+      var uitPunt = function (e) {
+        var r = vak.getBoundingClientRect();
+        if (!r.width) return Number(bereik.value);
+        return ((e.clientX - r.left) / r.width) * 100;
+      };
+
+      var sleept = false;
+      vak.addEventListener('pointerdown', function (e) {
+        sleept = true;
+        try { vak.setPointerCapture(e.pointerId); } catch (x) { /* oude browser */ }
+        zet(uitPunt(e));
+        e.preventDefault();
+      });
+      vak.addEventListener('pointermove', function (e) {
+        if (!sleept) return;
+        zet(uitPunt(e));
+        e.preventDefault();
+      });
+      var los = function (e) {
+        if (!sleept) return;
+        sleept = false;
+        try { vak.releasePointerCapture(e.pointerId); } catch (x) { /* al los */ }
+      };
+      vak.addEventListener('pointerup', los);
+      vak.addEventListener('pointercancel', los);
+      vak.addEventListener('lostpointercapture', function () { sleept = false; });
+
+      // het bereikveld blijft bestaan voor bediening met het toetsenbord
+      bereik.addEventListener('input', function () { zet(Number(bereik.value)); });
+      bereik.addEventListener('change', function () { zet(Number(bereik.value)); });
+      zet(50);
     });
 
     var toon = function (i) {

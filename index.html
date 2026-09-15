@@ -34,7 +34,7 @@
       <ul><li><a href="#waarom">Waarom</a></li><li><a href="#diensten">Diensten</a></li><li><a href="#werkwijze">Werkwijze</a></li><li><a href="#realisaties">Realisaties</a></li><li><a href="#contact">Contact</a></li></ul>
     </nav>
     <a class="rb-knop rb-knop--vol rb-kop__bel" href="tel:+32493870974">Bel +32 493 87 09 74</a>
-    <button class="rb-menuknop" type="button" aria-expanded="false" aria-controls="rb-mobielmenu" aria-label="Menu openen"><span></span><span></span><span></span></button>
+    <button class="rb-menuknop" type="button" aria-expanded="false" aria-controls="rb-mobielmenu" aria-label="Menu openen"><span class="rb-menuknop__lijnen" aria-hidden="true"><span></span><span></span><span></span></span></button>
   </div>
   <div class="rb-mobielmenu" id="rb-mobielmenu" hidden>
     <ul><li><a href="#waarom">Waarom</a></li><li><a href="#diensten">Diensten</a></li><li><a href="#werkwijze">Werkwijze</a></li><li><a href="#realisaties">Realisaties</a></li><li><a href="#contact">Contact</a></li></ul>
@@ -81,7 +81,7 @@
         <div><h3>Duidelijke prijs</h3><p>De prijs staat op papier voor we beginnen.</p></div>
       </li><li class="rb-reden rb-op">
         <span class="rb-reden__nr">03</span>
-        <div><h3>Strakke afwerking</h3><p>Plinten, voegen en schilderwerk tot in het detail.</p></div>
+        <div><h3>Vlotte coördinatie</h3><p>Wij voeren elk onderdeel zelf uit. De ene ploeg begint waar de andere stopt.</p></div>
       </li>
     </ul>
     <figure class="rb-duo rb-op"><img class="rb-duo__a" src="img/bijgebouw-voor-900.jpg" srcset="img/bijgebouw-voor-500.jpg 500w, img/bijgebouw-voor-900.jpg 900w" sizes="(max-width:1000px) 92vw, 330px" alt="Werk aan de houten gevelbekleding van een bijgebouw" loading="lazy" decoding="async"><img class="rb-duo__b" src="img/badkamer1-na-900.jpg" srcset="img/badkamer1-na-500.jpg 500w, img/badkamer1-na-900.jpg 900w" sizes="(max-width:1000px) 92vw, 330px" alt="Afgewerkte badkamer met een houten meubel en dubbele wastafel" loading="lazy" decoding="async"></figure>
@@ -91,8 +91,8 @@
 <section class="rb-band rb-diensten" id="diensten">
   <div class="rb-breed">
     <div class="rb-kopblok rb-kopblok--mid rb-op">
-      <h2>Wat we doen</h2>
-      <p>Wat wij bij u thuis komen doen.</p>
+      <h2>Onze diensten</h2>
+      
     </div>
     <div class="rb-rijen">
       <article class="rb-rij rb-op" id="d-totaalrenovatie">
@@ -255,36 +255,6 @@
   </div>
 </section>
 
-<section class="rb-cta" id="contact">
-  <div class="rb-cta__foto"><img class="" src="img/luiken-rij-900.jpg" srcset="img/luiken-rij-500.jpg 500w, img/luiken-rij-900.jpg 900w" sizes="100vw" alt="Rij opnieuw geschilderde blauwe luiken buiten tegen een haag" loading="lazy" decoding="async"></div>
-  <div class="rb-breed rb-cta__in">
-    <div class="rb-cta__tekst rb-op">
-      <h2>Uw project bespreken?</h2>
-      <p>Laat weten wat u wil laten doen. Wij komen langs en bezorgen u een prijs.</p>
-      <a class="rb-knop rb-knop--wit" href="tel:+32493870974">Bel +32 493 87 09 74</a>
-      <ul class="rb-cta__gegevens">
-        <li><span>Adres</span>Merendreesesteenweg 14<br>9031 Gent</li>
-        <li><span>Telefoon</span><a href="tel:+32493870974">+32 493 87 09 74</a><br><a href="tel:+32487734812">+32 487 73 48 12</a></li>
-        <li><span>E-mail</span><a href="mailto:info@raibouw.be">info@raibouw.be</a></li>
-      </ul>
-    </div>
-    <form class="rb-form rb-op" novalidate>
-      <h3>Vraag een offerte aan</h3>
-      <div class="rb-form__rij">
-        <label>Naam<input type="text" name="naam" placeholder="Uw naam" required></label>
-        <label>E-mail<input type="email" name="mail" placeholder="uw@email.be" required></label>
-      </div>
-      <div class="rb-form__rij">
-        <label>Telefoon<input type="tel" name="tel" placeholder="04xx xx xx xx"></label>
-        <label>Soort werk<select name="soort"><option value="">Kies een dienst</option><option>Totaalrenovatie</option><option>Badkamer</option><option>Keuken</option><option>Dakwerken</option><option>Schilderwerken</option><option>Vloeren en tegels</option><option>Pleisterwerk en afwerking</option><option>Isolatie</option><option>Iets anders</option></select></label>
-      </div>
-      <label class="rb-form__vol">Bericht<textarea name="bericht" rows="4" placeholder="Vertel kort wat u wil laten doen"></textarea></label>
-      <button class="rb-knop rb-knop--vol rb-form__knop" type="submit">Versturen</button>
-      <p class="rb-form__bedankt" hidden>Bedankt. Dit is een voorbeeldsite, uw bericht wordt niet verstuurd.</p>
-    </form>
-  </div>
-</section>
-
 <section class="rb-band rb-real" id="realisaties">
   <div class="rb-breed rb-real__kop rb-op">
     <div>
@@ -345,6 +315,31 @@
 </a></div>
   </div>
 </section>
+
+<section class="rb-cta" id="contact">
+  <div class="rb-cta__foto"><img class="" src="img/luiken-rij-900.jpg" srcset="img/luiken-rij-500.jpg 500w, img/luiken-rij-900.jpg 900w" sizes="100vw" alt="Rij opnieuw geschilderde blauwe luiken buiten tegen een haag" loading="lazy" decoding="async"></div>
+  <div class="rb-breed rb-cta__in">
+    <div class="rb-cta__tekst rb-op">
+      <h2>Uw project bespreken?</h2>
+      <p>Laat weten wat u wil laten doen. Wij komen langs en bezorgen u een prijs.</p>
+      <a class="rb-knop rb-knop--wit" href="tel:+32493870974">Bel +32 493 87 09 74</a>
+    </div>
+    <form class="rb-form rb-op" novalidate>
+      <h3>Vraag een offerte aan</h3>
+      <div class="rb-form__rij">
+        <label>Naam<input type="text" name="naam" placeholder="Uw naam" required></label>
+        <label>E-mail<input type="email" name="mail" placeholder="uw@email.be" required></label>
+      </div>
+      <div class="rb-form__rij">
+        <label>Telefoon<input type="tel" name="tel" placeholder="04xx xx xx xx"></label>
+        <label>Soort werk<select name="soort"><option value="">Kies een dienst</option><option>Totaalrenovatie</option><option>Badkamer</option><option>Keuken</option><option>Dakwerken</option><option>Schilderwerken</option><option>Vloeren en tegels</option><option>Pleisterwerk en afwerking</option><option>Isolatie</option><option>Iets anders</option></select></label>
+      </div>
+      <label class="rb-form__vol">Bericht<textarea name="bericht" rows="4" placeholder="Vertel kort wat u wil laten doen"></textarea></label>
+      <button class="rb-knop rb-knop--vol rb-form__knop" type="submit">Versturen</button>
+      <p class="rb-form__bedankt" hidden>Bedankt. Dit is een voorbeeldsite, uw bericht wordt niet verstuurd.</p>
+    </form>
+  </div>
+</section>
 </main>
 
 <footer class="rb-voet">
@@ -358,7 +353,7 @@
       </p>
     </div>
     <div class="rb-voet__kolom">
-      <h4>Wat we doen</h4>
+      <h4>Onze diensten</h4>
       <ul><li><a href="#d-totaalrenovatie">Totaalrenovatie</a></li><li><a href="#d-interieur">Badkamer en interieur</a></li><li><a href="#d-dak">Dak en isolatie</a></li></ul>
     </div>
     <div class="rb-voet__kolom">
