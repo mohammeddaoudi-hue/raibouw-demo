@@ -77,21 +77,24 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .rb-rond--vol { background: var(--merk); border-color: var(--merk); color: var(--wit); }
 .rb-rond--vol:hover { background: var(--merk-diep); border-color: var(--merk-diep); color: var(--wit); }
 
-/* ---------- topbalk ---------- */
+/* ---------- topbalk: e-mail links, sociaal rechts ---------- */
 .rb-top { background: var(--wit); border-bottom: 1px solid var(--lijn); font-size: 13.5px; color: var(--tekst); }
-.rb-top__in { display: flex; align-items: center; gap: 26px; min-height: 44px; flex-wrap: wrap; }
-.rb-top__bel a { display: inline-flex; align-items: center; gap: 7px; }
-.rb-top__bel svg { color: var(--merk); }
+.rb-top__in { display: flex; align-items: center; justify-content: space-between; min-height: 44px; }
+.rb-top__mail a { display: inline-flex; align-items: center; gap: 9px; min-height: 44px; }
+.rb-top__mail svg { color: var(--merk); flex: 0 0 auto; }
 .rb-top a:hover { color: var(--merk); }
+.rb-top__soc { display: flex; align-items: center; gap: 4px; }
+.rb-top__soc a { width: 32px; height: 32px; border-radius: 999px; color: var(--zacht); display: grid; place-items: center; transition: color .18s ease, background .18s ease; }
+.rb-top__soc a:hover { color: var(--merk); background: var(--merk-licht); }
+
+/* taalkeuze: in de navigatiebalk en in het uitklapmenu */
 .rb-talen { display: flex; align-items: center; gap: 2px; }
 .rb-talen--kop { margin-left: auto; padding-right: 20px; margin-right: 4px; border-right: 1px solid var(--lijn); }
 .rb-talen--menu { display: none; }
-.rb-taal { display: inline-flex; align-items: center; justify-content: center; min-width: 32px; height: 26px; padding: 0 7px; border-radius: 3px; font-family: "Plus Jakarta Sans", system-ui, sans-serif; font-size: 12.5px; font-weight: 700; letter-spacing: .02em; color: var(--zacht); transition: color .18s ease, background .18s ease; }
+.rb-taal { display: inline-flex; align-items: center; justify-content: center; min-width: 34px; height: 28px; padding: 0 8px; border-radius: 3px; font-family: "Plus Jakarta Sans", system-ui, sans-serif; font-size: 12.5px; font-weight: 700; letter-spacing: .03em; color: var(--zacht); transition: color .18s ease, background .18s ease; }
 a.rb-taal:hover { color: var(--merk); background: var(--merk-licht); }
 .rb-taal.is-aan { color: var(--wit); background: var(--merk); }
-.rb-top__soc { margin-left: auto; display: flex; gap: 8px; }
-.rb-top__soc a { width: 30px; height: 30px; border-radius: 999px; background: var(--merk); color: var(--wit); display: grid; place-items: center; }
-.rb-top__soc a:hover { background: var(--merk-diep); color: var(--wit); }
+.rb-talen--kop .rb-taal { height: 44px; }
 
 /* ---------- kop ---------- */
 .rb-kop { position: sticky; top: 0; z-index: 60; background: var(--wit); border-bottom: 1px solid var(--lijn); }
@@ -199,9 +202,9 @@ a.rb-bewijs__google:hover { transform: translateY(-1px); box-shadow: 0 6px 18px 
 .rb-boog svg { width: 100%; height: 100%; }
 
 /* ---------- voor en na ---------- */
-.rb-schuif { max-width: 960px; margin-inline: auto; }
+.rb-schuif { max-width: 760px; margin-inline: auto; }
 .rb-schuif__paar figcaption { margin-top: 18px; text-align: center; font-family: "Plus Jakarta Sans", system-ui, sans-serif; font-weight: 700; font-size: 17px; color: var(--kop); }
-.rb-schuif__vak { position: relative; width: 100%; height: clamp(340px, 54vh, 560px); border-radius: var(--r-vak); overflow: hidden; background: #000; touch-action: pan-y; cursor: ew-resize; user-select: none; -webkit-user-select: none; }
+.rb-schuif__vak { position: relative; width: 100%; height: clamp(300px, 42vh, 440px); border-radius: var(--r-vak); overflow: hidden; background: #000; touch-action: pan-y; cursor: ew-resize; user-select: none; -webkit-user-select: none; }
 .rb-schuif__na, .rb-schuif__voor { position: absolute; inset: 0; overflow: hidden; }
 .rb-schuif__voor { clip-path: inset(0 50% 0 0); }
 .rb-schuif__na img, .rb-schuif__voor img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; -webkit-user-drag: none; }
@@ -322,18 +325,9 @@ a.rb-score:hover span { color: var(--merk); }
   :root { --zij: 22px; --lucht: 58px; }
   html { scroll-padding-top: 78px; }
 
-  /* één rij: bellen links, sociaal rechts. Mail en adres staan in de voettekst. */
-  .rb-top__in { flex-wrap: nowrap; justify-content: space-between; gap: 12px; min-height: 42px; font-size: 13.5px; padding: 0; }
-  .rb-top__stuk:nth-child(1) { display: none; }
-  .rb-top__stuk:nth-child(3) { display: none; }
-  .rb-top__bel { display: block; }
-  .rb-top__bel a { font-weight: 600; color: var(--inkt); min-height: 42px; }
-  .rb-talen--kop { display: none; }
-  .rb-talen--menu { display: flex; gap: 6px; margin-top: 20px; }
-  .rb-talen--menu .rb-taal { flex: 1; min-width: 0; height: 44px; font-size: 14px; border: 1px solid var(--lijn); border-radius: var(--r); }
-  .rb-talen--menu .rb-taal.is-aan { border-color: var(--merk); }
-  .rb-top__soc { margin-left: auto; gap: 7px; }
-  .rb-top__soc a { width: 28px; height: 28px; }
+  .rb-top { font-size: 13px; }
+  .rb-top__mail a { gap: 7px; }
+  .rb-top__soc a { width: 30px; height: 30px; }
 
   .rb-kop__in { min-height: 68px; gap: 14px; }
   .rb-nav { display: none; }
@@ -505,3 +499,10 @@ a.rb-score:hover span { color: var(--merk); }
 @media (prefers-reduced-motion: reduce) {
   .rb-belzweef { transition: none; }
 }
+
+/* ---------- voor en na schermvullend ---------- */
+.rb-schuif__groot { margin-right: 6px; }
+.rb-schuif__paar:fullscreen { background: #0a101c; display: flex; flex-direction: column; justify-content: center; padding: 3vh 3vw; }
+.rb-schuif__paar:fullscreen .rb-schuif__vak { height: 88vh; border-radius: 0; }
+.rb-schuif__paar:fullscreen figcaption { color: var(--wit); margin-top: 14px; }
+.rb-schuif__paar:fullscreen .rb-schuif__merk { font-size: 14px; padding: 9px 17px; }

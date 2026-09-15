@@ -187,6 +187,12 @@
     schuif.addEventListener('click', function (e) {
       var k = e.target.closest('button');
       if (!k) return;
+      if (k.hasAttribute('data-groot')) {
+        var paar = paren[huidig];
+        if (document.fullscreenElement) { document.exitFullscreen(); }
+        else if (paar && paar.requestFullscreen) { paar.requestFullscreen().catch(function () { /* geweigerd */ }); }
+        return;
+      }
       if (k.dataset.schuif === 'vorige') toonPaar(huidig - 1);
       else if (k.dataset.schuif === 'volgende') toonPaar(huidig + 1);
       else if (k.dataset.naar !== undefined) toonPaar(Number(k.dataset.naar));
