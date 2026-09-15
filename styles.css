@@ -100,8 +100,8 @@ a.rb-taal:hover { color: var(--merk); background: var(--merk-licht); }
 .rb-kop { position: sticky; top: 0; z-index: 60; background: var(--wit); border-bottom: 1px solid var(--lijn); }
 .rb-kop__in { display: flex; align-items: center; gap: 34px; min-height: 84px; }
 .rb-logo img { width: 128px; height: auto; }
-.rb-nav ul { display: flex; gap: 30px; }
-.rb-nav a { font-family: "Plus Jakarta Sans", system-ui, sans-serif; font-size: 15.5px; font-weight: 600; color: var(--inkt); padding: 8px 0; border-bottom: 2px solid transparent; }
+.rb-nav ul { display: flex; gap: 28px; flex-wrap: nowrap; }
+.rb-nav a { font-family: "Plus Jakarta Sans", system-ui, sans-serif; font-size: 15.5px; font-weight: 600; color: var(--inkt); padding: 8px 0; border-bottom: 2px solid transparent; white-space: nowrap; }
 .rb-nav a:hover { color: var(--merk); border-color: var(--merk); }
 .rb-kop__bel { height: 48px; font-size: 15px; }
 
