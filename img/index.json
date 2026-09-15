@@ -1,0 +1,184 @@
+[
+ {
+  "naam": "zolder-voor",
+  "bron": "01-DBZBO1sq_rr-1.jpg",
+  "w": 1440,
+  "h": 1800,
+  "grootste": 900
+ },
+ {
+  "naam": "zolder-na",
+  "bron": "01-DBZBO1sq_rr-3.jpg",
+  "w": 1440,
+  "h": 1801,
+  "grootste": 900
+ },
+ {
+  "naam": "badkamer1-voor",
+  "bron": "02-DBEwWs9O83V-1.jpg",
+  "w": 1440,
+  "h": 1800,
+  "grootste": 900
+ },
+ {
+  "naam": "badkamer1-tegels",
+  "bron": "02-DBEwWs9O83V-3.jpg",
+  "w": 1440,
+  "h": 1800,
+  "grootste": 900
+ },
+ {
+  "naam": "badkamer1-pleister",
+  "bron": "02-DBEwWs9O83V-4.jpg",
+  "w": 1440,
+  "h": 1799,
+  "grootste": 900
+ },
+ {
+  "naam": "badkamer1-na",
+  "bron": "02-DBEwWs9O83V-5.jpg",
+  "w": 1440,
+  "h": 1800,
+  "grootste": 900
+ },
+ {
+  "naam": "badkamer2-voor",
+  "bron": "05-C3X_-Naq3nT-1.jpg",
+  "w": 1440,
+  "h": 1085,
+  "grootste": 900
+ },
+ {
+  "naam": "badkamer2-na",
+  "bron": "05-C3X_-Naq3nT-3.jpg",
+  "w": 1200,
+  "h": 900,
+  "grootste": 900
+ },
+ {
+  "naam": "wachtruimte-a",
+  "bron": "07-CYGmzAJqAW4-1.jpg",
+  "w": 1440,
+  "h": 1080,
+  "grootste": 900
+ },
+ {
+  "naam": "wachtruimte-b",
+  "bron": "07-CYGmzAJqAW4-3.jpg",
+  "w": 1440,
+  "h": 1083,
+  "grootste": 900
+ },
+ {
+  "naam": "luiken-twee",
+  "bron": "08-CUxf4inqGc4-1.jpg",
+  "w": 1440,
+  "h": 1800,
+  "grootste": 900
+ },
+ {
+  "naam": "luiken-rij",
+  "bron": "08-CUxf4inqGc4-3.jpg",
+  "w": 1440,
+  "h": 1795,
+  "grootste": 900
+ },
+ {
+  "naam": "luiken-gevel",
+  "bron": "08-CUxf4inqGc4-4.jpg",
+  "w": 1440,
+  "h": 1800,
+  "grootste": 900
+ },
+ {
+  "naam": "luiken-werkplaats",
+  "bron": "08-CUxf4inqGc4-5.jpg",
+  "w": 1440,
+  "h": 1795,
+  "grootste": 900
+ },
+ {
+  "naam": "kamer-voor",
+  "bron": "09-CUxfsqQKq5n-1.jpg",
+  "w": 1440,
+  "h": 1080,
+  "grootste": 900
+ },
+ {
+  "naam": "kamer-na",
+  "bron": "09-CUxfsqQKq5n-3.jpg",
+  "w": 1440,
+  "h": 1085,
+  "grootste": 900
+ },
+ {
+  "naam": "keuken-voor",
+  "bron": "10-CUxfkbfq8Cd-1.jpg",
+  "w": 1440,
+  "h": 1080,
+  "grootste": 900
+ },
+ {
+  "naam": "keuken-na",
+  "bron": "10-CUxfkbfq8Cd-3.jpg",
+  "w": 1440,
+  "h": 1085,
+  "grootste": 900
+ },
+ {
+  "naam": "dak-stelling",
+  "bron": "11-CUxeD3DKegt-1.jpg",
+  "w": 1440,
+  "h": 1800,
+  "grootste": 900
+ },
+ {
+  "naam": "dak-rand",
+  "bron": "11-CUxeD3DKegt-3.jpg",
+  "w": 1800,
+  "h": 1440,
+  "grootste": 1600
+ },
+ {
+  "naam": "dak-strip",
+  "bron": "11-CUxeD3DKegt-4.jpg",
+  "w": 1800,
+  "h": 1440,
+  "grootste": 1600
+ },
+ {
+  "naam": "bijgebouw-voor",
+  "bron": "12-CUxcN2aKlgz-1.jpg",
+  "w": 1440,
+  "h": 1080,
+  "grootste": 900
+ },
+ {
+  "naam": "bijgebouw-na",
+  "bron": "12-CUxcN2aKlgz-3.jpg",
+  "w": 1440,
+  "h": 1083,
+  "grootste": 900
+ },
+ {
+  "naam": "bijgebouw-breed",
+  "bron": "12-CUxcN2aKlgz-4.jpg",
+  "w": 1440,
+  "h": 1085,
+  "grootste": 900
+ },
+ {
+  "naam": "gevel-luiken",
+  "bron": "hl-01.jpg",
+  "w": 1136,
+  "h": 640,
+  "grootste": 900
+ },
+ {
+  "naam": "gevel-stelling",
+  "bron": "hl-02.jpg",
+  "w": 640,
+  "h": 1136,
+  "grootste": 500
+ }
+]
