@@ -55,6 +55,116 @@
     start();
   }
 
+
+  /* ---- werkwijze: de bolletjes volgen de scroll ---- */
+  var stappen = Array.prototype.slice.call(document.querySelectorAll('.rb-stap'));
+  var werkwijze = document.querySelector('.rb-werkwijze');
+  if (stappen.length && werkwijze) {
+    if (rustig) {
+      stappen.forEach(function (e) { e.classList.add('is-aan'); });
+    } else {
+      var wacht = false;
+      var meet = function () {
+        var r = werkwijze.getBoundingClientRect();
+        var vh = window.innerHeight || 800;
+        var begin = vh * 0.82;          // eerste bolletje kleurt zodra de sectie hier komt
+        var eind = vh * 0.34;           // laatste bolletje kleurt hier
+        var loop = (begin - r.top) / (begin - eind + r.height * 0.55);
+        var p = Math.max(0, Math.min(1, loop));
+        var n = Math.ceil(p * stappen.length);
+        stappen.forEach(function (e, i) { e.classList.toggle('is-aan', i < n); });
+      };
+      var tik = function () {
+        if (wacht) return;
+        wacht = true;
+        requestAnimationFrame(function () { wacht = false; meet(); });
+      };
+      window.addEventListener('scroll', tik, { passive: true });
+      window.addEventListener('resize', tik);
+      meet();
+    }
+  }
+
+
+  /* ---- doorlopende banden: lopen vanzelf, en je kan ze zelf verslepen ---- */
+  Array.prototype.forEach.call(document.querySelectorAll('.rb-loop'), function (loop) {
+    var spoor = loop.querySelector('.rb-loop__spoor');
+    if (!spoor) return;
+    var merken = loop.classList.contains('rb-loop--merken');
+    var snelheid = merken ? 0.28 : 0.42;
+    var pauze = false, positie = 0, sleept = false, startX = 0, startPos = 0;
+
+    var helft = function () { return spoor.scrollWidth / 2; };
+    var wikkel = function () {
+      var h = helft();
+      if (!h) return;
+      if (loop.scrollLeft >= h) loop.scrollLeft -= h;
+      else if (loop.scrollLeft <= 0) loop.scrollLeft += h;
+      positie = loop.scrollLeft;
+    };
+
+    var stap = function () {
+      if (!pauze && !rustig && !sleept && loop.scrollWidth > loop.clientWidth) {
+        positie += snelheid;
+        loop.scrollLeft = positie;
+        wikkel();
+      }
+      requestAnimationFrame(stap);
+    };
+
+    loop.addEventListener('pointerenter', function () { pauze = true; });
+    loop.addEventListener('pointerleave', function () { pauze = false; positie = loop.scrollLeft; });
+
+    loop.addEventListener('pointerdown', function (e) {
+      sleept = true; startX = e.clientX; startPos = loop.scrollLeft;
+      loop.classList.add('is-sleept');
+      try { loop.setPointerCapture(e.pointerId); } catch (x) { /* oude browser */ }
+    });
+    loop.addEventListener('pointermove', function (e) {
+      if (!sleept) return;
+      loop.scrollLeft = startPos - (e.clientX - startX);
+      wikkel();
+      e.preventDefault();
+    });
+    var losLaten = function (e) {
+      if (!sleept) return;
+      sleept = false;
+      loop.classList.remove('is-sleept');
+      positie = loop.scrollLeft;
+      try { loop.releasePointerCapture(e.pointerId); } catch (x) { /* al los */ }
+    };
+    loop.addEventListener('pointerup', losLaten);
+    loop.addEventListener('pointercancel', losLaten);
+
+    var rust;
+    loop.addEventListener('scroll', function () {
+      if (sleept) return;
+      clearTimeout(rust);
+      rust = setTimeout(function () { positie = loop.scrollLeft; wikkel(); }, 120);
+    }, { passive: true });
+
+    // een klik op een tegel mag niet afgaan na een sleepbeweging
+    loop.addEventListener('click', function (e) {
+      if (Math.abs(loop.scrollLeft - startPos) > 6) { e.preventDefault(); }
+    }, true);
+
+    requestAnimationFrame(stap);
+    loop.__band = { loop: loop, spoor: spoor, wikkel: wikkel, zetPositie: function (x) { positie = x; } };
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll('[data-band]'), function (k) {
+    k.addEventListener('click', function () {
+      var loop = document.querySelector('.rb-real .rb-loop');
+      if (!loop || !loop.__band) return;
+      var tegel = loop.querySelector('.rb-tegel');
+      var stapje = tegel ? tegel.getBoundingClientRect().width + 18 : 300;
+      var heen = k.dataset.band === 'vorige' ? -1 : 1;
+      loop.__band.wikkel();
+      loop.scrollBy({ left: heen * stapje, behavior: 'smooth' });
+      setTimeout(function () { loop.__band.zetPositie(loop.scrollLeft); loop.__band.wikkel(); }, 520);
+    });
+  });
+
   /* ---- mobiel menu ---- */
   var knop = document.querySelector('.rb-menuknop');
   var menu = document.getElementById('rb-mobielmenu');
@@ -146,15 +256,49 @@
     });
   }
 
-  /* ---- reviewspoor ---- */
+  /* ---- reviewspoor: loopt oneindig rond ---- */
   var spoor = document.querySelector('.rb-revspoor');
-  var revknoppen = document.querySelectorAll('[data-rev]');
-  if (spoor && revknoppen.length) {
-    Array.prototype.forEach.call(revknoppen, function (k) {
+  if (spoor) {
+    var helft = function () { return spoor.scrollWidth / 2; };
+    var stapBreedte = function () {
+      var kaarten = spoor.querySelectorAll('.rb-rev');
+      if (kaarten.length > 1) return kaarten[1].offsetLeft - kaarten[0].offsetLeft;
+      return kaarten.length ? kaarten[0].getBoundingClientRect().width : 340;
+    };
+    var wikkel = function () {
+      var h = helft();
+      if (!h) return;
+      var snap = spoor.style.scrollSnapType;
+      spoor.style.scrollSnapType = 'none';
+      if (spoor.scrollLeft >= h) spoor.scrollLeft -= h;
+      else if (spoor.scrollLeft <= 0) spoor.scrollLeft += h;
+      spoor.style.scrollSnapType = snap;
+    };
+
+    // starten in de eerste helft, zodat er naar beide kanten ruimte is
+    var klaarzetten = function () { if (spoor.scrollLeft === 0) { spoor.scrollLeft = 0; } };
+    klaarzetten();
+
+    var rust;
+    spoor.addEventListener('scroll', function () {
+      clearTimeout(rust);
+      rust = setTimeout(wikkel, 140);
+    }, { passive: true });
+
+    Array.prototype.forEach.call(document.querySelectorAll('[data-rev]'), function (k) {
       k.addEventListener('click', function () {
-        var kaart = spoor.querySelector('.rb-rev');
-        var stap = kaart ? kaart.getBoundingClientRect().width + 22 : 320;
-        spoor.scrollBy({ left: k.dataset.rev === 'vorige' ? -stap : stap, behavior: 'smooth' });
+        var stap = stapBreedte();
+        var h = helft();
+        var heen = k.dataset.rev === 'vorige' ? -1 : 1;
+        // vóór het schuiven omwikkelen, dan is er altijd spoor over
+        if (h) {
+          var snap = spoor.style.scrollSnapType;
+          spoor.style.scrollSnapType = 'none';
+          if (heen > 0 && spoor.scrollLeft + stap > h - 2) spoor.scrollLeft -= h;
+          if (heen < 0 && spoor.scrollLeft - stap < 2) spoor.scrollLeft += h;
+          spoor.style.scrollSnapType = snap;
+        }
+        spoor.scrollBy({ left: heen * stap, behavior: 'smooth' });
       });
     });
   }
