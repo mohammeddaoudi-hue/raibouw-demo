@@ -86,117 +86,6 @@
   }
 
 
-  /* ---- doorlopende banden: lopen vanzelf, en je kan ze zelf verslepen ---- */
-  Array.prototype.forEach.call(document.querySelectorAll('.rb-loop'), function (loop) {
-    var spoor = loop.querySelector('.rb-loop__spoor');
-    if (!spoor) return;
-    var merken = loop.classList.contains('rb-loop--merken');
-    var perSeconde = merken ? 26 : 38;      // pixels per seconde
-    var pauze = false, sleept = false, startX = 0, startPos = 0;
-    var positie = 0, vorigeTijd = 0;
-
-    var helft = function () { return spoor.scrollWidth / 2; };
-
-    // de float-positie is de waarheid. De browser rondt scrollLeft af, dus we lezen
-    // hem tijdens het automatisch lopen nooit terug.
-    var schrijf = function () {
-      var h = helft();
-      if (h > 0) {
-        while (positie >= h) positie -= h;
-        while (positie < 0) positie += h;
-      }
-      loop.scrollLeft = positie;
-    };
-
-    // na een eigen scroll of sleep de float weer gelijkzetten met wat de browser toont
-    var synchroniseer = function () {
-      var h = helft();
-      positie = loop.scrollLeft;
-      if (h > 0) {
-        if (positie >= h) { positie -= h; loop.scrollLeft = positie; }
-        else if (positie <= 0) { positie += h; loop.scrollLeft = positie; }
-      }
-    };
-
-    var stap = function (tijd) {
-      if (!vorigeTijd) vorigeTijd = tijd;
-      var verschil = Math.min(tijd - vorigeTijd, 100) / 1000;
-      vorigeTijd = tijd;
-      if (!pauze && !rustig && !sleept && spoor.scrollWidth > loop.clientWidth) {
-        positie += perSeconde * verschil;
-        schrijf();
-      }
-      requestAnimationFrame(stap);
-    };
-
-    // alleen een muis pauzeert bij aanwijzen. Op een telefoon komt er na een tik
-    // geen pointerleave, dan zou de band voorgoed blijven stilstaan.
-    loop.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') pauze = true; });
-    loop.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') { pauze = false; synchroniseer(); } });
-
-    loop.addEventListener('pointerdown', function (e) {
-      sleept = true; startX = e.clientX; startPos = loop.scrollLeft;
-      loop.classList.add('is-sleept');
-      try { loop.setPointerCapture(e.pointerId); } catch (x) { /* oude browser */ }
-    });
-    loop.addEventListener('pointermove', function (e) {
-      if (!sleept) return;
-      loop.scrollLeft = startPos - (e.clientX - startX);
-      e.preventDefault();
-    });
-    var losLaten = function (e) {
-      if (!sleept) return;
-      sleept = false;
-      loop.classList.remove('is-sleept');
-      synchroniseer();
-      if (e && e.pointerType !== 'mouse') pauze = false;
-      try { loop.releasePointerCapture(e.pointerId); } catch (x) { /* al los */ }
-    };
-    loop.addEventListener('pointerup', losLaten);
-    loop.addEventListener('pointercancel', losLaten);
-    window.addEventListener('pointerup', function (e) { if (e.pointerType !== 'mouse') { sleept = false; pauze = false; } });
-    document.addEventListener('visibilitychange', function () { if (!document.hidden) { vorigeTijd = 0; pauze = false; synchroniseer(); } });
-
-    var rust;
-    loop.addEventListener('scroll', function () {
-      if (sleept || !pauze) return;   // tijdens het automatisch lopen niets terugleren
-      clearTimeout(rust);
-      rust = setTimeout(synchroniseer, 120);
-    }, { passive: true });
-
-    // een klik op een tegel mag niet afgaan na een sleepbeweging
-    loop.addEventListener('click', function (e) {
-      if (sleept || Math.abs(loop.scrollLeft - startPos) > 6) e.preventDefault();
-    }, true);
-
-    requestAnimationFrame(stap);
-    loop.__band = {
-      loop: loop, spoor: spoor,
-      synchroniseer: synchroniseer,
-      pauzeer: function (aan) { pauze = aan; if (!aan) vorigeTijd = 0; },
-      stand: function () { return { pauze: pauze, sleept: sleept, positie: Math.round(positie), rustig: rustig }; },
-    };
-  });
-
-  Array.prototype.forEach.call(document.querySelectorAll('[data-band]'), function (k) {
-    k.addEventListener('click', function () {
-      var loop = document.querySelector('.rb-real .rb-loop');
-      if (!loop || !loop.__band) return;
-      var tegel = loop.querySelector('.rb-tegel');
-      var stapje = tegel ? tegel.getBoundingClientRect().width + 18 : 300;
-      var heen = k.dataset.band === 'vorige' ? -1 : 1;
-      // de automatische beweging even stilleggen, anders schrijft die de sprong meteen terug
-      loop.__band.pauzeer(true);
-      loop.__band.synchroniseer();
-      loop.scrollBy({ left: heen * stapje, behavior: 'smooth' });
-      setTimeout(function () {
-        loop.__band.synchroniseer();
-        loop.__band.pauzeer(false);
-      }, 620);
-    });
-  });
-
-
   /* ---- zwevende belknop: verschijnt voorbij de hero ---- */
   var belKnop = document.querySelector('.rb-belzweef');
   if (belKnop) {
@@ -204,12 +93,12 @@
       var hero = document.querySelector('.rb-hero') || document.querySelector('.rb-paginakop');
       return hero ? hero.offsetTop + hero.offsetHeight * 0.7 : 500;
     };
-    var bezig = false;
+    var belBezig = false;
     var kijk = function () {
-      if (bezig) return;
-      bezig = true;
+      if (belBezig) return;
+      belBezig = true;
       requestAnimationFrame(function () {
-        bezig = false;
+        belBezig = false;
         belKnop.classList.toggle('is-zichtbaar', window.scrollY > grens());
       });
     };
@@ -238,7 +127,7 @@
     });
   }
 
-  /* ---- voor en na ---- */
+  /* ---- voor en na: slepen met de vinger of de muis ---- */
   var schuif = document.querySelector('.rb-schuif');
   if (schuif) {
     var paren = Array.prototype.slice.call(schuif.querySelectorAll('.rb-schuif__paar'));
@@ -252,11 +141,11 @@
       var vak = paar.querySelector('.rb-schuif__vak');
       if (!bereik || !voor || !lijn || !vak) return;
 
-      var zet = function (x) {
-        x = Math.max(0, Math.min(100, x));
-        bereik.value = x;
-        voor.style.clipPath = 'inset(0 ' + (100 - x) + '% 0 0)';
-        lijn.style.left = x + '%';
+      var zet = function (waarde) {
+        var w = Math.max(0, Math.min(100, waarde));
+        bereik.value = w;
+        voor.style.clipPath = 'inset(0 ' + (100 - w) + '% 0 0)';
+        lijn.style.left = w + '%';
       };
       var uitPunt = function (e) {
         var r = vak.getBoundingClientRect();
@@ -264,96 +153,160 @@
         return ((e.clientX - r.left) / r.width) * 100;
       };
 
-      var sleept = false;
+      var bezig = false;
       vak.addEventListener('pointerdown', function (e) {
-        sleept = true;
+        bezig = true;
         try { vak.setPointerCapture(e.pointerId); } catch (x) { /* oude browser */ }
         zet(uitPunt(e));
         e.preventDefault();
       });
-      vak.addEventListener('pointermove', function (e) {
-        if (!sleept) return;
-        zet(uitPunt(e));
-        e.preventDefault();
-      });
-      var los = function (e) {
-        if (!sleept) return;
-        sleept = false;
+      vak.addEventListener('pointermove', function (e) { if (bezig) { zet(uitPunt(e)); e.preventDefault(); } });
+      var losSchuif = function (e) {
+        if (!bezig) return;
+        bezig = false;
         try { vak.releasePointerCapture(e.pointerId); } catch (x) { /* al los */ }
       };
-      vak.addEventListener('pointerup', los);
-      vak.addEventListener('pointercancel', los);
-      vak.addEventListener('lostpointercapture', function () { sleept = false; });
+      vak.addEventListener('pointerup', losSchuif);
+      vak.addEventListener('pointercancel', losSchuif);
+      vak.addEventListener('lostpointercapture', function () { bezig = false; });
 
-      // het bereikveld blijft bestaan voor bediening met het toetsenbord
       bereik.addEventListener('input', function () { zet(Number(bereik.value)); });
       bereik.addEventListener('change', function () { zet(Number(bereik.value)); });
       zet(50);
     });
 
-    var toon = function (i) {
+    var toonPaar = function (i) {
       huidig = (i + paren.length) % paren.length;
       paren.forEach(function (p, n) {
         p.hidden = n !== huidig;
         p.classList.toggle('is-aan', n === huidig);
       });
-      stippen.forEach(function (s, n) { s.classList.toggle('is-aan', n === huidig); });
+      stippen.forEach(function (d, n) { d.classList.toggle('is-aan', n === huidig); });
     };
 
     schuif.addEventListener('click', function (e) {
       var k = e.target.closest('button');
       if (!k) return;
-      if (k.dataset.schuif === 'vorige') toon(huidig - 1);
-      else if (k.dataset.schuif === 'volgende') toon(huidig + 1);
-      else if (k.dataset.naar !== undefined) toon(Number(k.dataset.naar));
+      if (k.dataset.schuif === 'vorige') toonPaar(huidig - 1);
+      else if (k.dataset.schuif === 'volgende') toonPaar(huidig + 1);
+      else if (k.dataset.naar !== undefined) toonPaar(Number(k.dataset.naar));
     });
   }
 
-  /* ---- reviewspoor: loopt oneindig rond ---- */
-  var spoor = document.querySelector('.rb-revspoor');
-  if (spoor) {
+  /* ---- doorlopende banden: verschuiven met transform, blijven altijd lopen ---- */
+  Array.prototype.forEach.call(document.querySelectorAll('.rb-loop'), function (loop) {
+    var spoor = loop.querySelector('.rb-loop__spoor');
+    if (!spoor) return;
+    var merken = loop.classList.contains('rb-loop--merken');
+    var perSeconde = merken ? 26 : 40;
+    var x = 0, vorige = 0, pauze = false, sleept = false, startX = 0, startPos = 0, inBeeld = true;
+
     var helft = function () { return spoor.scrollWidth / 2; };
-    var stapBreedte = function () {
-      var kaarten = spoor.querySelectorAll('.rb-rev');
-      if (kaarten.length > 1) return kaarten[1].offsetLeft - kaarten[0].offsetLeft;
-      return kaarten.length ? kaarten[0].getBoundingClientRect().width : 340;
-    };
-    var wikkel = function () {
+    var teken = function () {
       var h = helft();
-      if (!h) return;
-      var snap = spoor.style.scrollSnapType;
-      spoor.style.scrollSnapType = 'none';
-      if (spoor.scrollLeft >= h) spoor.scrollLeft -= h;
-      else if (spoor.scrollLeft <= 0) spoor.scrollLeft += h;
-      spoor.style.scrollSnapType = snap;
+      if (h > 0) { while (x >= h) x -= h; while (x < 0) x += h; }
+      spoor.style.transform = 'translate3d(' + (-x) + 'px,0,0)';
+    };
+    var stap = function (tijd) {
+      if (!vorige) vorige = tijd;
+      var dt = Math.min(tijd - vorige, 120) / 1000;
+      vorige = tijd;
+      if (!pauze && !sleept && inBeeld && !rustig) { x += perSeconde * dt; teken(); }
+      requestAnimationFrame(stap);
     };
 
-    // starten in de eerste helft, zodat er naar beide kanten ruimte is
-    var klaarzetten = function () { if (spoor.scrollLeft === 0) { spoor.scrollLeft = 0; } };
-    klaarzetten();
+    // alleen een muis pauzeert bij aanwijzen; op een telefoon komt er geen pointerleave
+    loop.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') pauze = true; });
+    loop.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') pauze = false; });
 
-    var rust;
-    spoor.addEventListener('scroll', function () {
-      clearTimeout(rust);
-      rust = setTimeout(wikkel, 140);
-    }, { passive: true });
-
-    Array.prototype.forEach.call(document.querySelectorAll('[data-rev]'), function (k) {
-      k.addEventListener('click', function () {
-        var stap = stapBreedte();
-        var h = helft();
-        var heen = k.dataset.rev === 'vorige' ? -1 : 1;
-        // vóór het schuiven omwikkelen, dan is er altijd spoor over
-        if (h) {
-          var snap = spoor.style.scrollSnapType;
-          spoor.style.scrollSnapType = 'none';
-          if (heen > 0 && spoor.scrollLeft + stap > h - 2) spoor.scrollLeft -= h;
-          if (heen < 0 && spoor.scrollLeft - stap < 2) spoor.scrollLeft += h;
-          spoor.style.scrollSnapType = snap;
-        }
-        spoor.scrollBy({ left: heen * stap, behavior: 'smooth' });
-      });
+    loop.addEventListener('pointerdown', function (e) {
+      sleept = true; startX = e.clientX; startPos = x;
+      loop.classList.add('is-sleept');
+      try { loop.setPointerCapture(e.pointerId); } catch (err) { /* oude browser */ }
     });
+    loop.addEventListener('pointermove', function (e) {
+      if (!sleept) return;
+      x = startPos - (e.clientX - startX);
+      teken();
+      e.preventDefault();
+    });
+    var los = function (e) {
+      if (!sleept) return;
+      sleept = false;
+      loop.classList.remove('is-sleept');
+      if (e && e.pointerType !== 'mouse') pauze = false;
+      try { loop.releasePointerCapture(e.pointerId); } catch (err) { /* al los */ }
+    };
+    loop.addEventListener('pointerup', los);
+    loop.addEventListener('pointercancel', los);
+    window.addEventListener('pointerup', function (e) { if (e.pointerType !== 'mouse') { sleept = false; pauze = false; } });
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) { vorige = 0; pauze = false; } });
+
+    // buiten beeld stilleggen: scheelt werk op een telefoon
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (r) { inBeeld = r[0].isIntersecting; if (inBeeld) vorige = 0; }, { rootMargin: '150px' }).observe(loop);
+    }
+
+    // een klik op een tegel mag niet afgaan na een sleepbeweging
+    loop.addEventListener('click', function (e) { if (Math.abs(x - startPos) > 6) e.preventDefault(); }, true);
+
+    requestAnimationFrame(stap);
+    loop.__band = {
+      schuif: function (heen, afstand) {
+        pauze = true;
+        var doel = x + heen * afstand, begin = x, t0 = 0;
+        var animeer = function (tijd) {
+          if (!t0) t0 = tijd;
+          var p = Math.min((tijd - t0) / 420, 1);
+          var e2 = 1 - Math.pow(1 - p, 3);
+          x = begin + (doel - begin) * e2;
+          teken();
+          if (p < 1) requestAnimationFrame(animeer);
+          else { vorige = 0; pauze = false; }
+        };
+        requestAnimationFrame(animeer);
+      },
+      stand: function () { return { x: Math.round(x), pauze: pauze, sleept: sleept, inBeeld: inBeeld }; },
+    };
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll('[data-band]'), function (k) {
+    k.addEventListener('click', function () {
+      var loop = document.querySelector('.rb-real .rb-loop');
+      if (!loop || !loop.__band) return;
+      var tegel = loop.querySelector('.rb-tegel');
+      var afstand = tegel ? tegel.getBoundingClientRect().width + 18 : 300;
+      loop.__band.schuif(k.dataset.band === 'vorige' ? -1 : 1, afstand);
+    });
+  });
+
+  /* ---- reviews: carrousel op index, loopt oneindig rond ---- */
+  var revSpoor = document.querySelector('.rb-revspoor');
+  if (revSpoor) {
+    var revs = revSpoor.querySelectorAll('.rb-rev');
+    var aantal = revs.length;
+    var index = 0;
+    var toonRev = function (i) {
+      index = ((i % aantal) + aantal) % aantal;
+      revSpoor.style.transform = 'translate3d(' + (-index * 100) + '%,0,0)';
+      Array.prototype.forEach.call(revs, function (e, n) {
+        e.setAttribute('aria-hidden', n === index ? 'false' : 'true');
+      });
+    };
+    Array.prototype.forEach.call(document.querySelectorAll('[data-rev]'), function (k) {
+      k.addEventListener('click', function () { toonRev(index + (k.dataset.rev === 'vorige' ? -1 : 1)); });
+    });
+    // met de vinger vegen
+    var vX = 0, vBezig = false;
+    revSpoor.addEventListener('pointerdown', function (e) { vX = e.clientX; vBezig = true; });
+    revSpoor.addEventListener('pointerup', function (e) {
+      if (!vBezig) return;
+      vBezig = false;
+      var d = e.clientX - vX;
+      if (Math.abs(d) > 45) toonRev(index + (d < 0 ? 1 : -1));
+    });
+    revSpoor.addEventListener('pointercancel', function () { vBezig = false; });
+    toonRev(0);
   }
 
   /* ---- formulier: dit is een voorbeeldsite en verstuurt niets ---- */

@@ -127,7 +127,7 @@ a.rb-taal:hover { color: var(--merk); background: var(--merk-licht); }
 .rb-dia.is-aan { opacity: 1; }
 .rb-dia img { width: 100%; height: 100%; object-fit: cover; }
 .rb-hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(95deg, rgba(10, 16, 28, .86) 0%, rgba(10, 16, 28, .7) 42%, rgba(10, 16, 28, .22) 100%); }
-.rb-hero__in { position: relative; z-index: 2; padding-block: 92px; }
+.rb-hero__in { position: relative; z-index: 2; padding-block: 130px 92px; }
 .rb-hero h1 { color: var(--wit); font-size: clamp(34px, 4.4vw, 62px); font-weight: 700; max-width: 26ch; }
 .rb-hero__sub { margin-top: 20px; color: rgba(255, 255, 255, .88); font-size: 18px; max-width: 52ch; }
 .rb-hero__knoppen { margin-top: 34px; display: flex; gap: 13px; flex-wrap: wrap; }
@@ -282,9 +282,10 @@ a.rb-score:hover span { color: var(--merk); }
 .rb-reviews__beeld { border-radius: var(--r-vak); overflow: hidden; aspect-ratio: 3 / 3.6; }
 .rb-reviews__beeld img { width: 100%; height: 100%; object-fit: cover; }
 .rb-reviews__spoorvak { min-width: 0; }
-.rb-revspoor { display: flex; gap: 40px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; }
-.rb-revspoor::-webkit-scrollbar { display: none; }
-.rb-rev { flex: 0 0 100%; scroll-snap-align: start; }
+.rb-revvak { overflow: hidden; }
+.rb-revspoor { display: flex; transition: transform .45s cubic-bezier(.3,.7,.3,1); will-change: transform; }
+
+.rb-rev { flex: 0 0 100%; min-width: 100%; }
 .rb-rev__aanhaling { font-family: "Plus Jakarta Sans", system-ui, sans-serif; font-size: 44px; font-weight: 800; color: var(--merk); line-height: .7; display: block; }
 .rb-rev__tekst { margin-top: 14px; font-size: 18px; line-height: 1.6; color: var(--inkt); }
 .rb-rev__naam { margin-top: 20px; font-family: "Plus Jakarta Sans", system-ui, sans-serif; font-weight: 700; font-size: 16px; color: var(--kop); }
@@ -343,7 +344,7 @@ a.rb-score:hover span { color: var(--merk); }
   .rb-logo img { width: 112px; }
 
   .rb-hero { min-height: calc(100svh - 104px); }
-  .rb-hero__in { padding-block: 104px 124px; }
+  .rb-hero__in { padding-block: 150px 124px; }
   .rb-hero__bediening { right: var(--zij); bottom: 30px; }
   /* de streepjes vallen weg; de Google-pil neemt die plek onderaan links over */
   .rb-hero__streep { display: none; }
@@ -410,10 +411,10 @@ a.rb-score:hover span { color: var(--merk); }
 .rb-duo__b { bottom: 0; height: 58%; clip-path: polygon(0 20%, 100% 5%, 100% 100%, 0 100%); border-radius: 0 0 var(--r-vak) var(--r-vak); }
 
 /* doorlopende band */
-.rb-loop { width: 100%; position: relative; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; -ms-overflow-style: none; overscroll-behavior-x: contain; cursor: grab; touch-action: pan-y; }
+.rb-loop { width: 100%; position: relative; overflow: hidden; cursor: grab; touch-action: pan-y; }
 .rb-loop::-webkit-scrollbar { display: none; }
 .rb-loop.is-sleept { cursor: grabbing; }
-.rb-loop__spoor { display: flex; width: max-content; }
+.rb-loop__spoor { display: flex; width: max-content; will-change: transform; transform: translate3d(0, 0, 0); backface-visibility: hidden; }
 .rb-loop__spoor--traag { align-items: center; }
 
 /* realisatieband op de home */
