@@ -184,15 +184,41 @@
       stippen.forEach(function (d, n) { d.classList.toggle('is-aan', n === huidig); });
     };
 
+    // Vergroten met een eigen overlay: Safari op iPhone geeft de schermvullende modus alleen aan video.
+    // Het paar verhuist zolang naar body, want .rb-schuif krijgt bij het onthullen een transform
+    // en dan zou position:fixed aan dat blok hangen in plaats van aan het venster.
+    var plek = null;
+    var grootMaken = function (aan) {
+      var groot = document.querySelector('.rb-schuif__paar.is-groot');
+      if (aan) {
+        var paar = paren[huidig];
+        if (!paar || groot) return;
+        schuif.style.minHeight = schuif.offsetHeight + 'px';
+        plek = document.createComment('plaats van het vergrote paar');
+        paar.parentNode.insertBefore(plek, paar);
+        document.body.appendChild(paar);
+        paar.classList.add('is-groot');
+        document.body.classList.add('rb-vast');
+      } else {
+        if (!groot) return;
+        groot.classList.remove('is-groot');
+        if (plek && plek.parentNode) { plek.parentNode.insertBefore(groot, plek); plek.parentNode.removeChild(plek); }
+        plek = null;
+        schuif.style.minHeight = '';
+        document.body.classList.remove('rb-vast');
+      }
+    };
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') grootMaken(false); });
+    // op document, want het vergrote paar hangt dan niet meer onder .rb-schuif
+    document.addEventListener('click', function (e) {
+      if (e.target.closest && e.target.closest('[data-sluit]')) { grootMaken(false); return; }
+      if (e.target.classList && e.target.classList.contains('is-groot')) grootMaken(false);
+    });
+
     schuif.addEventListener('click', function (e) {
       var k = e.target.closest('button');
       if (!k) return;
-      if (k.hasAttribute('data-groot')) {
-        var paar = paren[huidig];
-        if (document.fullscreenElement) { document.exitFullscreen(); }
-        else if (paar && paar.requestFullscreen) { paar.requestFullscreen().catch(function () { /* geweigerd */ }); }
-        return;
-      }
+      if (k.hasAttribute('data-groot')) { grootMaken(true); return; }
       if (k.dataset.schuif === 'vorige') toonPaar(huidig - 1);
       else if (k.dataset.schuif === 'volgende') toonPaar(huidig + 1);
       else if (k.dataset.naar !== undefined) toonPaar(Number(k.dataset.naar));

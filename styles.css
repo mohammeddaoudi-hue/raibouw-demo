@@ -501,8 +501,36 @@ a.rb-score:hover span { color: var(--merk); }
 }
 
 /* ---------- voor en na schermvullend ---------- */
+/* Een eigen overlay in plaats van de schermvullende modus van de browser:
+   Safari op iPhone geeft die alleen aan video. */
 .rb-schuif__groot { margin-right: 6px; }
-.rb-schuif__paar:fullscreen { background: #0a101c; display: flex; flex-direction: column; justify-content: center; padding: 3vh 3vw; }
-.rb-schuif__paar:fullscreen .rb-schuif__vak { height: 88vh; border-radius: 0; }
-.rb-schuif__paar:fullscreen figcaption { color: var(--wit); margin-top: 14px; }
-.rb-schuif__paar:fullscreen .rb-schuif__merk { font-size: 14px; padding: 9px 17px; }
+.rb-schuif__sluit { display: none; }
+
+.rb-schuif__paar.is-groot {
+  position: fixed; inset: 0; z-index: 200; margin: 0;
+  background: #0a101c; padding: 5vh 4vw;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  animation: rb-groeien .2s ease;
+}
+@keyframes rb-groeien { from { opacity: 0; } to { opacity: 1; } }
+.rb-schuif__paar.is-groot .rb-schuif__vak {
+  width: auto; max-width: 100%;
+  height: min(78vh, calc(92vw * var(--hoog) / var(--breed)));
+  aspect-ratio: var(--breed) / var(--hoog);
+}
+.rb-schuif__paar.is-groot figcaption { color: var(--wit); margin-top: 18px; font-size: 18px; }
+.rb-schuif__paar.is-groot .rb-schuif__merk { font-size: 13.5px; padding: 8px 16px; }
+.rb-schuif__paar.is-groot .rb-schuif__sluit {
+  display: grid; place-items: center; position: absolute; top: 18px; right: 18px;
+  width: 46px; height: 46px; border-radius: 999px; border: 0; cursor: pointer;
+  background: rgba(255, 255, 255, .16); color: var(--wit); transition: background .18s ease, color .18s ease;
+}
+.rb-schuif__paar.is-groot .rb-schuif__sluit:hover { background: var(--wit); color: var(--kop); }
+body.rb-vast { overflow: hidden; }
+
+@media (max-width: 1000px) {
+  .rb-schuif__paar.is-groot { padding: 4vh 3vw; }
+  .rb-schuif__paar.is-groot .rb-schuif__vak { height: min(70vh, calc(94vw * var(--hoog) / var(--breed))); }
+  .rb-schuif__paar.is-groot figcaption { font-size: 16px; margin-top: 14px; }
+  .rb-schuif__paar.is-groot .rb-schuif__sluit { top: 12px; right: 12px; width: 44px; height: 44px; }
+}
