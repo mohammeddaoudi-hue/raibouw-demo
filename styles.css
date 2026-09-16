@@ -80,7 +80,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 /* ---------- topbalk: e-mail links, sociaal rechts ---------- */
 .rb-top { background: var(--wit); border-bottom: 1px solid var(--lijn); font-size: 13.5px; color: var(--tekst); }
 .rb-top__in { display: flex; align-items: center; justify-content: space-between; min-height: 44px; }
-.rb-top__mail a { display: inline-flex; align-items: center; gap: 9px; min-height: 44px; }
+.rb-top__mail a { display: inline-flex; align-items: center; gap: 9px; min-height: 44px; white-space: nowrap; }
 .rb-top__mail svg { color: var(--merk); flex: 0 0 auto; }
 .rb-top a:hover { color: var(--merk); }
 .rb-top__soc { display: flex; align-items: center; gap: 4px; }
@@ -103,7 +103,7 @@ a.rb-taal:hover { color: var(--merk); background: var(--merk-licht); }
 .rb-nav ul { display: flex; gap: 28px; flex-wrap: nowrap; }
 .rb-nav a { font-family: "Plus Jakarta Sans", system-ui, sans-serif; font-size: 15.5px; font-weight: 600; color: var(--inkt); padding: 8px 0; border-bottom: 2px solid transparent; white-space: nowrap; }
 .rb-nav a:hover { color: var(--merk); border-color: var(--merk); }
-.rb-kop__bel { height: 48px; font-size: 15px; }
+.rb-kop__bel { height: 48px; font-size: 15px; white-space: nowrap; }
 
 .rb-menuknop { display: none; width: 46px; height: 46px; border: 1px solid var(--lijn); background: var(--wit); border-radius: var(--r); cursor: pointer; padding: 0; place-items: center; transition: border-color .2s ease, background .2s ease; }
 .rb-menuknop[aria-expanded="true"] { background: var(--merk); border-color: var(--merk); }
@@ -484,7 +484,7 @@ a.rb-score:hover span { color: var(--merk); }
   height: 54px; padding: 0 22px; border-radius: 999px;
   background: var(--merk); color: var(--wit);
   font-family: "Plus Jakarta Sans", system-ui, sans-serif; font-weight: 700; font-size: 15px;
-  box-shadow: 0 8px 26px rgba(15, 34, 68, .3);
+  box-shadow: 0 8px 26px rgba(15, 34, 68, .3); white-space: nowrap;
   opacity: 0; visibility: hidden; transform: translateY(16px) scale(.96);
   transition: opacity .28s ease, transform .28s cubic-bezier(.3,.7,.3,1), background .18s ease, visibility .28s;
 }
