@@ -239,10 +239,11 @@ a.rb-bewijs__google:hover { transform: translateY(-1px); box-shadow: 0 6px 18px 
 .rb-cta { position: relative; padding: 84px 0; color: var(--wit); overflow: hidden; }
 .rb-cta__foto { position: absolute; inset: 0; }
 .rb-cta__foto img { width: 100%; height: 100%; object-fit: cover; }
-.rb-cta::after { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, rgba(12, 20, 36, .95) 0%, rgba(12, 20, 36, .88) 48%, rgba(12, 20, 36, .7) 100%); }
+/* Sterk genoeg voor leesbare tekst links, licht genoeg om de realisatie te tonen. */
+.rb-cta::after { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, rgba(12, 20, 36, .92) 0%, rgba(12, 20, 36, .8) 46%, rgba(12, 20, 36, .38) 100%); }
 .rb-cta__in { position: relative; z-index: 2; display: grid; grid-template-columns: 1fr 460px; gap: 70px; align-items: center; }
 .rb-cta__tekst h2 { color: var(--wit); }
-.rb-cta__tekst > p { margin-top: 16px; color: rgba(255, 255, 255, .8); max-width: 44ch; }
+.rb-cta__tekst > p { margin-top: 16px; color: var(--wit); max-width: 44ch; }
 .rb-cta__tekst .rb-knop { margin-top: 28px; }
 .rb-cta__gegevens { margin-top: 36px; display: grid; gap: 16px; font-size: 15px; color: rgba(255, 255, 255, .85); }
 .rb-cta__gegevens span { display: block; font-family: "Plus Jakarta Sans", system-ui, sans-serif; font-size: 12.5px; color: #93b0e0; font-weight: 700; margin-bottom: 3px; }
